@@ -22,6 +22,8 @@ def parse_file(filename):
 
 def output(conf):
 	longest_name = len(max(conf.wifi, key=len))
+	print(' ' * (longest_name - len('wifi name')), end='')
+	print('wifi name | password')
 	for i in range(len(conf.wifi)):
 		print(' ' * (longest_name - len(conf.wifi[i])), end='')
 		print(conf.wifi[i], end='')
