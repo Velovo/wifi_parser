@@ -37,7 +37,7 @@ def set_newfilename(path_to_wifi_config):
 	while path_to_wifi_config == None:
 		path_to_wifi_config = input('Enter path to wifi configuration: ')
 		if os.path.isfile(path_to_wifi_config) == True:
-			fd = open('./conf', 'w+')
+			fd = open('/data/data/com.termux/files/home/wifi_parser/conf', 'w+')
 			fd.write(path_to_wifi_config)
 			fd.close
 			return (path_to_wifi_config)
@@ -47,11 +47,11 @@ def set_newfilename(path_to_wifi_config):
 
 def getfilname():
 	path_to_wifi_config = None
-	if os.path.isfile('./conf') == False:
+	if os.path.isfile('/data/data/com.termux/files/home/wifi_parser/conf') == False:
 		print('No configuration file found.')
 		return (set_newfilename(path_to_wifi_config))
 	else:
-		fd = open('./conf')
+		fd = open('/data/data/com.termux/files/home/wifi_parser/conf')
 		path_to_wifi_config = fd.readline()
 		if os.path.isfile(path_to_wifi_config) == True:
 			return (path_to_wifi_config)
