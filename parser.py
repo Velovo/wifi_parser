@@ -11,11 +11,24 @@ def parse_file(filename):
 	conf = configuration()
 	for network in network_list:
 		try:
-			conf.wifi.append(network[0][1].text.replace('"', ''))
+			for element in network[0]:
+				if element.attrib['name'] == 'SSID':
+					conf.wifi.append(element.text.replace('"', ''))
 		except:
 			conf.wifi.append(None)
 		try:
-			conf.password.append(network[0][4].text.replace('"', ''))
+			for segment in network:
+				for element in segment:
+					if element.attrib['name'] == 'PreSharedKey':
+						if element.text == None:
+							conf.password.append(None)
+						else:
+							conf.password.append(element.text.replace('"', ''))
+					if segment.tag == 'WifiEnterpriseConfiguration' and len(conf.password) > 0:
+						if element.attrib['name'] == 'Identity' and len(conf.wifi) == len(conf.password):
+							conf.password[len(conf.password) - 1] = element.text
+						if element.attrib['name'] == 'Password' and len(conf.wifi) == len(conf.password) and conf.password[len(conf.password) - 1] != None:
+							conf.password[len(conf.password) - 1] = conf.password[len(conf.password) - 1] + ':' + element.text
 		except:
 			conf.password.append(None)
 	return (conf)
@@ -37,7 +50,7 @@ def set_newfilename(path_to_wifi_config):
 	while path_to_wifi_config == None:
 		path_to_wifi_config = input('Enter path to wifi configuration: ')
 		if os.path.isfile(path_to_wifi_config) == True:
-			fd = open('/data/data/com.termux/files/home/wifi_parser/conf', 'w+')
+			fd = open('/data/data/com.termux/files/home/wifi_parser/conf', 'w+')		# fd = open('./conf', 'w+') 	
 			fd.write(path_to_wifi_config)
 			fd.close
 			return (path_to_wifi_config)
@@ -47,11 +60,11 @@ def set_newfilename(path_to_wifi_config):
 
 def getfilname():
 	path_to_wifi_config = None
-	if os.path.isfile('/data/data/com.termux/files/home/wifi_parser/conf') == False:
+	if os.path.isfile('/data/data/com.termux/files/home/wifi_parser/conf') == False:	# if os.path.isfile('./conf') == False:
 		print('No configuration file found.')
 		return (set_newfilename(path_to_wifi_config))
 	else:
-		fd = open('/data/data/com.termux/files/home/wifi_parser/conf')
+		fd = open('/data/data/com.termux/files/home/wifi_parser/conf')					# fd = open('./conf')
 		path_to_wifi_config = fd.readline()
 		if os.path.isfile(path_to_wifi_config) == True:
 			return (path_to_wifi_config)
